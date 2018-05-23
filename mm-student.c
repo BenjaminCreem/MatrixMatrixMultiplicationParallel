@@ -1,25 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mm-header.h"
+#include <time.h>
+#include <omp.h>
 
 //Benjamin Creem
+//May 23 2018
 int main(int argc, char *argv[]){
-	int n = 5; //matrix is n x n
+	int n = 5; //matrixes are n x n
 	
 	//Allocating Memory and Assigning Values
-	double **matrix = allocMat(matrix, n);
-	double *vector = allocVec(vector, n);
-	assignMat(matrix, n);
-	assignVec(vector, n);
+	double **mat1 = allocMat(mat1, n);
+    double **mat2 = allocMat(mat2, n);
+	assignMat(mat1, n);
+    assignMat(mat2, n);
+	
+    printf("First Matrix\n");
+    printMat(mat1, n);
+    printf("\nSecond Matrix\n");
+    printMat(mat2, n);
 
-	//Finding Dot Product and Printing
-	double* result = mvp(matrix, vector, n);
-	printMatVec(matrix, vector, result, n);
+	//Finding Matrix Product  and Printing
+	double **result = matMultiply(mat1, mat2, n);
+	//printResult(mat1, mat2, result, n);
+    printf("\nResult Matrix\n");
+    printMat(result, n);
 
 	//Free Memory
-	freeMat(matrix, n);
-    free(vector);
-    free(result);
+	freeMat(mat1, n);
+    freeMat(mat2, n);
+    freeMat(result, n);
 	return 0;
 }
 
@@ -46,74 +56,70 @@ double** allocMat(double** mat, int n)
 }
 
 //Assign values to first matrix
+//Picks a random number between 1 and 5 for the values
 void assignMat(double** mat, int n)
 {
     for(int i=0; i<n; i++)
     {
         for(int j=0; j<n; j++)
 		{
-            if(i==j)
-            {
-                mat[i][j]=2;
-            }
-            else if(j-i==1 || i-j==1)
-            {
-                mat[i][j]=1;
-            }
-            else
-            {
-                mat[i][j]=0;
-            }
+            mat[i][j] = i + j;
         }
     }    
 }
 
-//Allocate memory for vector
-double* allocVec(double* vec, int n)
+//Print singular matrix
+void printMat(double** mat, int n)
 {
-	vec=(double*)malloc(n*sizeof(double));
-	return vec;
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            printf("%.2f\t", mat[i][j]);
+        }
+        printf("\n");
+    }
 }
 
-//Assign values to vector
-void assignVec(double* vec, int n)
-{
-	for(int i=0; i<n; i++)
-	{
-		vec[i]=1;
-	}
-}
-
-//Print matrix dot vector
-void printMatVec(double** mat, double* vec, double* mvp, int n)
+//Print mat1 * mat2
+void printResult(double** mat1, double** mat2, double** r, int n)
 {
 	for(int i=0; i<n; i++)
 	{
 		for(int j=0; j<n; j++)
 		{
-			printf("%.2f ", mat[i][j]);
+			printf("%.2f ", mat1[i][j]);
 		}
-		printf("* %.2f ", vec[i]);
-		printf("= %.2f \n", mvp[i]);
+
+        for(int j = 0; j<n; j++)
+        {
+            printf(" * %.2f ", mat2[i][j]);
+        }
+	
+        for(int j = 0; j < n; j++)
+        {
+            printf(" = %.2f \n", r[i][j]);
+        }
 	}
 }
 
-//Calculate matrix dot vector
-double* mvp(double **mat, double* vec, int n)
+//Calculate matrix product 
+double** matMultiply(double **mat1, double** mat2, int n)
 {
 	//Return matrix
-	double* mvp = (double*)malloc(n * sizeof(double));
-
-	//Find dot product
-	for(int i=0; i<n; i++)
-	{
-        mvp[i] = 0;
-		for(int j=0; j<n; j++)
-		{
-			mvp[i] += mat[j][i] * vec[i];
-		}
-	}
-    return mvp;
+	double **result = allocMat(result, n);
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            result[i][j] = 0;
+            for(int k = 0; k < n; k++)
+            {
+                result[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
+    }
+    return result;
 }
 
  
