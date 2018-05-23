@@ -108,6 +108,7 @@ double** matMultiply(double **mat1, double** mat2, int n)
 {
 	//Return matrix
 	double **result = allocMat(result, n);
+    #pragma omp parallel for 
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < n; j++)
