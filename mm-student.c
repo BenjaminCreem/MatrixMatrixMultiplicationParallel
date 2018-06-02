@@ -9,7 +9,7 @@
         long double: cbrtl, \
         default: cbrt, \
         float:cbrtf)(X)    
-#define BensType double
+#define BensType int
 
 //Benjamin Creem
 //May 24 2018
@@ -18,7 +18,8 @@
 //values by the program
 int main(int argc, char *argv[]){
 	int n = 1000; //matrixes are n x n
-	
+	printf("size of int: %lu\n", sizeof(int));
+    printf("size of double %lu\n", sizeof(double));
 	//Allocating Memory and Assigning Values
 	BensType **mat1 = allocMat(mat1, n);
     BensType **mat2 = allocMat(mat2, n);
@@ -53,7 +54,7 @@ void freeMat(BensType** mat, int n)
 }
 
 //Allocate memory for first matrix
-double** allocMat(BensType** mat, int n)
+BensType** allocMat(BensType** mat, int n)
 {
 	mat= (BensType**)malloc(n*sizeof(*mat));
 	for(int i=0; i<n; i++)
@@ -86,8 +87,8 @@ void assignMat(BensType** mat, int n)
     }    
 }
 
-//Print singular matrix
-void printMat(BensType** mat, int n)
+//Print singular matrix - only works when matrix type is double
+void printMat(double** mat, int n)
 {
     for(int i = 0; i < n; i++)
     {
@@ -100,7 +101,7 @@ void printMat(BensType** mat, int n)
 }
 
 //Print mat1 * mat2
-void printResult(BensType** mat1, BensType** mat2, BensType** r, int n)
+void printResult(double** mat1, double** mat2, double** r, int n)
 {
 	for(int i=0; i<n; i++)
 	{
@@ -127,10 +128,10 @@ void printResult(BensType** mat1, BensType** mat2, BensType** r, int n)
 }
 
 //Calculate matrix product 
-double** matMultiply(BensType **mat1, BensType** mat2, int n)
+BensType** matMultiply(BensType **mat1, BensType** mat2, int n)
 {
 	//Return matrix
-	double **result = allocMat(result, n);
+	BensType **result = allocMat(result, n);
     #pragma omp parallel for shared(mat1, mat2, n, result)
     for(int i = 0; i < n; i++)
     {
