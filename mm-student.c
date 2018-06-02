@@ -5,11 +5,13 @@
 #include <omp.h>
 #include <math.h>
 
+//Attempt to use the _Generic thing. Didn't work out
 #define cbrt(X) _Generic((X), \
         long double: cbrtl, \
         default: cbrt, \
         float:cbrtf)(X)    
-#define BensType int
+//Used this instead
+#define BensType double
 
 //Benjamin Creem
 //May 24 2018
@@ -18,8 +20,6 @@
 //values by the program
 int main(int argc, char *argv[]){
 	int n = 1000; //matrixes are n x n
-	printf("size of int: %lu\n", sizeof(int));
-    printf("size of double %lu\n", sizeof(double));
 	//Allocating Memory and Assigning Values
 	BensType **mat1 = allocMat(mat1, n);
     BensType **mat2 = allocMat(mat2, n);
@@ -135,12 +135,14 @@ BensType** matMultiply(BensType **mat1, BensType** mat2, int n)
     #pragma omp parallel for shared(mat1, mat2, n, result)
     for(int i = 0; i < n; i++)
     {
+        //#pragma omp parallel for shared(mat1, mat2, n, result)
         for(int j = 0; j < n; j++)
         {
-            result[i][j] = 0;
+            result[j][i] = 0;
+            //#pragma omp parallel for shared(mat1, mat2, n, result)   
             for(int k = 0; k < n; k++)
             {
-                result[i][j] += mat1[i][k] * mat2[k][j];
+                result[j][i] += mat1[j][k] * mat2[k][i];
             }
         }
     }

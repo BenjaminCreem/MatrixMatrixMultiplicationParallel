@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#define BensType int
+#define BensType double
 
 BensType** matMultiply(BensType** mat1, BensType** mat2, int n);
 void freeMat(BensType** mat, int n);
